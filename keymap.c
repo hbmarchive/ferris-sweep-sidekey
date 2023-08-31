@@ -82,10 +82,10 @@ static bool kc_del_registered = false;
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [BASE_LAYER] = LAYOUT_split_3x5_2(
-    KC_Q,           LCTL_T(KC_W),    LALT_T(KC_F),  LGUI_T(KC_P),  KC_B,  KC_J,  RGUI_T(KC_L),  RALT_T(KC_U),  RCTL_T(KC_Y),  KC_BSPC,
-    KC_A,           KC_R,            KC_S,          KC_T,          KC_G,  KC_M,  KC_N,          KC_E,          KC_I,          KC_O,
-    TD(TD_LEFT),        KC_X,            KC_C,          KC_D,          KC_V,  KC_K,  KC_H,          KC_COMM,       KC_DOT,        TD(TD_RIGHT),
-    OSM(MOD_LSFT),  KC_SPC,  KC_ENT,        KC_ESC
+    KC_Q,           LCTL_T(KC_W),  LALT_T(KC_F),  LGUI_T(KC_P),  KC_B,  KC_J,  RGUI_T(KC_L),  RALT_T(KC_U),  RCTL_T(KC_Y),  KC_BSPC,
+    KC_A,           KC_R,          KC_S,          KC_T,          KC_G,  KC_M,  KC_N,          KC_E,          KC_I,          KC_O,
+    TD(TD_LEFT),    KC_X,          KC_C,          KC_D,          KC_V,  KC_K,  KC_H,          KC_COMM,       KC_DOT,        TD(TD_RIGHT),
+    OSM(MOD_LSFT),  KC_SPC,        KC_ENT,        KC_ESC
   ),
 
   [RIGHT_TAP_LAYER] = LAYOUT_split_3x5_2(
