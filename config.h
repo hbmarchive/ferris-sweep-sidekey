@@ -57,8 +57,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Tapping term for the homerow mod keys
 #define TAPPING_TERM_MODS 700
 
-// Tapping term for tapdance keys
-#define TAPPING_TERM_TAPDANCE 160
+// Tapping term for tap dance keys
+#define TAPPING_TERM_TAP_DANCE 160
 
 // Define the tap-hold tap dance action.
 #define ACTION_TAP_DANCE_TAP_HOLD(tap, hold) \

@@ -56,13 +56,11 @@ void right_reset(tap_dance_state_t *state, void *user_data);
 // Tap Dance definitions
 
 enum {
-  TD_SPC_TAB,
   TD_LEFT,
   TD_RIGHT
 };
 
 tap_dance_action_t tap_dance_actions[] = {
-    [TD_SPC_TAB] = ACTION_TAP_DANCE_DOUBLE(KC_SPC, KC_TAB),
     [TD_LEFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, left_finished, left_reset),
     [TD_RIGHT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, right_finished, right_reset)
 };
@@ -81,21 +79,18 @@ static uint8_t mod_state = 0;
 // State for managing shift backspace behaviour.
 static bool kc_del_registered = false;
 
-// State for managing shift up behaviour.
-static bool kc_down_registered = false;
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [BASE_LAYER] = LAYOUT_split_3x5_2(
     KC_Q,           LCTL_T(KC_W),    LALT_T(KC_F),  LGUI_T(KC_P),  KC_B,  KC_J,  RGUI_T(KC_L),  RALT_T(KC_U),  RCTL_T(KC_Y),  KC_BSPC,
     KC_A,           KC_R,            KC_S,          KC_T,          KC_G,  KC_M,  KC_N,          KC_E,          KC_I,          KC_O,
     TD(TD_LEFT),        KC_X,            KC_C,          KC_D,          KC_V,  KC_K,  KC_H,          KC_COMM,       KC_DOT,        TD(TD_RIGHT),
-    OSM(MOD_LSFT),  TD(TD_SPC_TAB),  KC_ENT,        KC_UP
+    OSM(MOD_LSFT),  KC_SPC,  KC_ENT,        KC_ESC
   ),
 
   [RIGHT_TAP_LAYER] = LAYOUT_split_3x5_2(
     KC_EXLM,         LSFT(KC_2),     LSFT(KC_3),  KC_DLR,   KC_PERC,  KC_CIRC,  KC_AMPR,        KC_ASTR,        KC_UNDS,  KC_PLUS,
-    KC_ESC,          LSFT(KC_NUBS),  KC_LBRC,     KC_LCBR,  KC_LPRN,  KC_COLN,  LSFT(KC_QUOT),  LSFT(KC_BSLS),  KC_MINS,  KC_EQL,
+    KC_TAB,          LSFT(KC_NUBS),  KC_LBRC,     KC_LCBR,  KC_LPRN,  KC_COLN,  LSFT(KC_QUOT),  LSFT(KC_BSLS),  KC_MINS,  KC_EQL,
     KC_CAPS,         KC_NUBS,        KC_RBRC,     KC_RCBR,  KC_RPRN,  KC_SCLN,  KC_QUOT,        KC_BSLS,        KC_GRV,   KC_SLSH,
     TO(BASE_LAYER),  KC_NO,          KC_NO,       KC_NO
   ),
@@ -104,7 +99,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_PAST,           KC_1,        KC_2,        KC_3,  KC_PPLS,  KC_NO,  KC_NO,    KC_NO,    KC_NO,  KC_NO,
     KC_PSLS,           KC_4,        KC_5,        KC_6,  KC_PMNS,  KC_NO,  M_NTRM,   M_EMOJI,  KC_NO,  KC_NO,
     KC_0,              KC_7,        KC_8,        KC_9,  KC_DOT,   KC_NO,  KC_NO,    KC_NO,    KC_NO,  KC_NO,
-    LSFT(LCTL(KC_C)),  LCTL(KC_C),  LCTL(KC_V),  KC_NO
+    LCTL(KC_C), LCTL(KC_V),  LCTL(KC_V), LCTL(KC_C)
   ),
 
   [LEFT_TAP_LAYER] = LAYOUT_split_3x5_2(
@@ -115,10 +110,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [LEFT_HOLD_LAYER] = LAYOUT_split_3x5_2(
-    KC_NO,             KC_NO,       KC_NO,       KC_NO,    KC_NO,   M_XTAB,   M_PDESK,  LCTL(KC_TAB),  M_ALTT,   M_NDESK,
-    KC_NO,             M_APP4,      M_APP1,      M_APP2,   M_APP3,  KC_WH_U,  KC_LEFT,  KC_DOWN,       KC_UP,    KC_RGHT,
-    KC_NO,             KC_NO,       KC_NO,       M_1PASS,  KC_NO,   KC_WH_D,  KC_HOME,  KC_PGDN,       KC_PGUP,  KC_END,
-    LSFT(LCTL(KC_C)),  LCTL(KC_C),  LCTL(KC_V),  KC_NO
+    KC_NO,             KC_NO,       KC_NO,       KC_NO,    KC_NO,             M_XTAB,   M_PDESK,  LCTL(KC_TAB),  M_ALTT,   M_NDESK,
+    KC_NO,             M_APP4,      M_APP1,      M_APP2,   M_APP3,            KC_WH_U,  KC_LEFT,  KC_DOWN,       KC_UP,    KC_RGHT,
+    KC_NO,             KC_NO,       KC_NO,       M_1PASS,  LSFT(LCTL(KC_C)),  KC_WH_D,  KC_HOME,  KC_PGDN,       KC_PGUP,  KC_END,
+    LCTL(KC_C), LCTL(KC_V),  LCTL(KC_V), LCTL(KC_C)
   ),
 
 };
@@ -136,6 +131,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (IS_LAYER_ON(LEFT_TAP_LAYER) || IS_LAYER_ON(RIGHT_TAP_LAYER)) {
     switch (keycode) {
       case KC_Z:
+      case KC_SLSH:
         break;
       default:
         del_mods(MOD_MASK_SHIFT);
@@ -160,24 +156,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (kc_del_registered) {
           unregister_code(KC_DEL);
           kc_del_registered = false;
-          return false;
-        }
-      }
-      break;
-    // Shift-up produces down.
-    case KC_UP:
-      if (record->event.pressed) {
-        if (mod_state & MOD_MASK_SHIFT) {
-          del_mods(MOD_MASK_SHIFT);
-          register_code(KC_DOWN);
-          kc_down_registered = true;
-          set_mods(mod_state);
-          return false;
-        }
-      } else {
-        if (kc_down_registered) {
-          unregister_code(KC_DEL);
-          kc_down_registered = false;
           return false;
         }
       }
@@ -354,10 +332,9 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     case LCTL_T(KC_Y):
       return TAPPING_TERM_MODS;
     // Set the tapping term for tap dance keys.
-    case TD(TD_SPC_TAB):
     case TD(TD_LEFT):
     case TD(TD_RIGHT):
-      return TAPPING_TERM_TAPDANCE;
+      return TAPPING_TERM_TAP_DANCE;
     default:
       return TAPPING_TERM;
   }
@@ -385,10 +362,11 @@ td_state_t td_get_state(tap_dance_state_t *state) {
     // assume it was a flutter and call it a hold.
     if (state->pressed)
       return TD_HOLD;
-    // If the keypress has been interrupted then we will assume that there was
-    // some actual fast typing going on and issue two taps, which will be the
-    // most common scenario.
-    if (state->interrupted) return TD_DOUBLE_TAP;
+    // If the keypress has finished or has been interrupted then we will assume
+    // that there was some actual fast typing going on and issue two taps, which
+    // will be the most common scenario.
+    if (state->interrupted || !state->pressed)
+      return TD_DOUBLE_TAP;
   }
 
   return TD_UNKNOWN;
