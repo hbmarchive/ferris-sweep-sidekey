@@ -104,8 +104,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [LEFT_TAP_LAYER] = LAYOUT_split_3x5_2(
     KC_NO,           KC_F1,  KC_F2,   KC_F3,   KC_F4,   M_XTAB,   M_ISWIN,  M_ISCB,   KC_PSCR,  KC_INS,
-    KC_NO,           KC_F5,  KC_F6,   KC_F7,   KC_F8,   KC_BRIU,  KC_VOLU,  KC_MNXT,  KC_MPLY,  LSFT(KC_INS),
-    KC_Z,            KC_F9,  KC_F10,  KC_F11,  KC_F12,  KC_BRID,  KC_VOLD,  KC_MPRV,  KC_MUTE,  LCTL(KC_INS),
+    KC_NO,           KC_F5,  KC_F6,   KC_F7,   KC_F8,   KC_BRIU,  KC_VOLU,  KC_MPLY,  KC_MNXT,  LSFT(KC_INS),
+    KC_Z,            KC_F9,  KC_F10,  KC_F11,  KC_F12,  KC_BRID,  KC_VOLD,  KC_MUTE,  KC_MPRV,  LCTL(KC_INS),
     TO(BASE_LAYER),  KC_NO,  KC_NO,   KC_NO
   ),
 
