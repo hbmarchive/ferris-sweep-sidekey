@@ -56,11 +56,15 @@ void right_reset(tap_dance_state_t *state, void *user_data);
 // Tap Dance definitions
 
 enum {
+  TD_Q_ESC,
+  TD_A_TAB,
   TD_LEFT,
   TD_RIGHT
 };
 
 tap_dance_action_t tap_dance_actions[] = {
+    [TD_Q_ESC] = ACTION_TAP_DANCE_DOUBLE(KC_Q, KC_ESC),
+    [TD_A_TAB] = ACTION_TAP_DANCE_DOUBLE(KC_A, KC_TAB),
     [TD_LEFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, left_finished, left_reset),
     [TD_RIGHT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, right_finished, right_reset)
 };
@@ -82,8 +86,8 @@ static bool kc_del_registered = false;
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [BASE_LAYER] = LAYOUT_split_3x5_2(
-    KC_Q,           LCTL_T(KC_W),  LALT_T(KC_F),  LGUI_T(KC_P),  KC_B,  KC_J,  RGUI_T(KC_L),  RALT_T(KC_U),  RCTL_T(KC_Y),  KC_BSPC,
-    KC_A,           KC_R,          KC_S,          KC_T,          KC_G,  KC_M,  KC_N,          KC_E,          KC_I,          KC_O,
+    TD(TD_Q_ESC),   LCTL_T(KC_W),  LALT_T(KC_F),  LGUI_T(KC_P),  KC_B,  KC_J,  RGUI_T(KC_L),  RALT_T(KC_U),  RCTL_T(KC_Y),  KC_BSPC,
+    TD(TD_A_TAB),   KC_R,          KC_S,          KC_T,          KC_G,  KC_M,  KC_N,          KC_E,          KC_I,          KC_O,
     TD(TD_LEFT),    KC_X,          KC_C,          KC_D,          KC_V,  KC_K,  KC_H,          KC_COMM,       KC_DOT,        TD(TD_RIGHT),
     OSM(MOD_LSFT),  KC_SPC,        KC_ENT,        KC_ESC
   ),
@@ -332,6 +336,8 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     case LCTL_T(KC_Y):
       return TAPPING_TERM_MODS;
     // Set the tapping term for tap dance keys.
+    case TD(TD_Q_ESC):
+    case TD(TD_A_TAB):
     case TD(TD_LEFT):
     case TD(TD_RIGHT):
       return TAPPING_TERM_TAP_DANCE;
