@@ -58,7 +58,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define TAPPING_TERM_MODS 700
 
 // Tapping term for tap dance keys
-#define TAPPING_TERM_TAP_DANCE 160
+#define TAPPING_TERM_TD_LR 160
+#define TAPPING_TERM_TD_THUMB 160
 
 // Define the tap-hold tap dance action.
 #define ACTION_TAP_DANCE_TAP_HOLD(tap, hold) \
