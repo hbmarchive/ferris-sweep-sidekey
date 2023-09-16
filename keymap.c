@@ -38,6 +38,22 @@ typedef struct {
   td_state_t state;
 } td_tap_t;
 
+static td_tap_t td_shift = {
+  .state = TD_NONE
+};
+
+static td_tap_t td_space = {
+  .state = TD_NONE
+};
+
+static td_tap_t td_enter = {
+  .state = TD_NONE
+};
+
+static td_tap_t td_escape = {
+  .state = TD_NONE
+};
+
 static td_tap_t td_left = {
   .state = TD_NONE
 };
@@ -48,6 +64,14 @@ static td_tap_t td_right = {
 
 td_state_t td_get_state(tap_dance_state_t *state);
 
+void shift_finished(tap_dance_state_t *state, void *user_data);
+void shift_reset(tap_dance_state_t *state, void *user_data);
+void space_finished(tap_dance_state_t *state, void *user_data);
+void space_reset(tap_dance_state_t *state, void *user_data);
+void enter_finished(tap_dance_state_t *state, void *user_data);
+void enter_reset(tap_dance_state_t *state, void *user_data);
+void escape_finished(tap_dance_state_t *state, void *user_data);
+void escape_reset(tap_dance_state_t *state, void *user_data);
 void left_finished(tap_dance_state_t *state, void *user_data);
 void left_reset(tap_dance_state_t *state, void *user_data);
 void right_finished(tap_dance_state_t *state, void *user_data);
@@ -56,15 +80,19 @@ void right_reset(tap_dance_state_t *state, void *user_data);
 // Tap Dance definitions
 
 enum {
-  TD_Q_ESC,
-  TD_A_TAB,
+  TD_SHIFT,
+  TD_SPACE,
+  TD_ENTER,
+  TD_ESCAPE,
   TD_LEFT,
   TD_RIGHT
 };
 
 tap_dance_action_t tap_dance_actions[] = {
-    [TD_Q_ESC] = ACTION_TAP_DANCE_DOUBLE(KC_Q, KC_ESC),
-    [TD_A_TAB] = ACTION_TAP_DANCE_DOUBLE(KC_A, KC_TAB),
+    [TD_SHIFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, shift_finished, shift_reset),
+    [TD_SPACE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, space_finished, space_reset)
+    [TD_ENTER] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, enter_finished, enter_reset),
+    [TD_ESCAPE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, escape_finished, escape_reset)
     [TD_LEFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, left_finished, left_reset),
     [TD_RIGHT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, right_finished, right_reset)
 };
@@ -86,38 +114,38 @@ static bool kc_del_registered = false;
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [BASE_LAYER] = LAYOUT_split_3x5_2(
-    TD(TD_Q_ESC),   LCTL_T(KC_W),  LALT_T(KC_F),  LGUI_T(KC_P),  KC_B,  KC_J,  RGUI_T(KC_L),  RALT_T(KC_U),  RCTL_T(KC_Y),  KC_BSPC,
-    TD(TD_A_TAB),   KC_R,          KC_S,          KC_T,          KC_G,  KC_M,  KC_N,          KC_E,          KC_I,          KC_O,
-    TD(TD_LEFT),    KC_X,          KC_C,          KC_D,          KC_V,  KC_K,  KC_H,          KC_COMM,       KC_DOT,        TD(TD_RIGHT),
-    OSM(MOD_LSFT),  KC_SPC,        KC_ENT,        KC_ESC
+    KC_Q,          LCTL_T(KC_W),  LALT_T(KC_F),  LGUI_T(KC_P),  KC_B,  KC_J,  LGUI_T(KC_L),  LALT_T(KC_U),  LCTL_T(KC_Y),  KC_BSPC,
+    KC_A,          KC_R,          KC_S,          KC_T,          KC_G,  KC_M,  KC_N,          KC_E,          KC_I,          KC_O,
+    TD(TD_LEFT),   KC_X,          KC_C,          KC_D,          KC_V,  KC_K,  KC_H,          KC_COMM,       KC_DOT,        TD(TD_RIGHT),
+    TD(TD_SHIFT),  TD(TD_SPACE),  TD(TD_ENTER),  TD(TD_ESCAPE)
   ),
 
   [RIGHT_TAP_LAYER] = LAYOUT_split_3x5_2(
-    KC_EXLM,  LSFT(KC_2),     LSFT(KC_3),  KC_DLR,         KC_PERC,  KC_CIRC,  KC_AMPR,        KC_ASTR,        KC_UNDS,  KC_PLUS,
-    KC_TAB,   LSFT(KC_NUBS),  KC_LBRC,     KC_LCBR,        KC_LPRN,  KC_COLN,  LSFT(KC_QUOT),  LSFT(KC_BSLS),  KC_MINS,  KC_EQL,
-    KC_CAPS,  KC_NUBS,        KC_RBRC,     KC_RCBR,        KC_RPRN,  KC_SCLN,  KC_QUOT,        KC_BSLS,        KC_GRV,   KC_SLSH,
-    KC_NO,    KC_NO,          KC_NO,       TO(BASE_LAYER)
+    KC_EXLM,  LSFT(KC_2),     LSFT(KC_3),  KC_DLR,   KC_PERC,  KC_CIRC,  KC_AMPR,        KC_ASTR,        KC_UNDS,  KC_PLUS,
+    KC_TAB,   LSFT(KC_NUBS),  KC_LBRC,     KC_LCBR,  KC_LPRN,  KC_COLN,  LSFT(KC_QUOT),  LSFT(KC_BSLS),  KC_MINS,  KC_EQL,
+    KC_CAPS,  KC_NUBS,        KC_RBRC,     KC_RCBR,  KC_RPRN,  KC_SCLN,  KC_QUOT,        KC_BSLS,        KC_GRV,   KC_SLSH,
+    KC_TRNS,  KC_TRNS,        KC_TRNS,     KC_TRNS
   ),
 
   [RIGHT_HOLD_LAYER] = LAYOUT_split_3x5_2(
-    KC_PAST,           KC_1,        KC_2,        KC_3,  KC_PPLS,  KC_NO,  KC_NO,    KC_NO,    KC_NO,  KC_NO,
-    KC_PSLS,           KC_4,        KC_5,        KC_6,  KC_PMNS,  KC_NO,  M_NTRM,   M_EMOJI,  KC_NO,  KC_NO,
-    KC_0,              KC_7,        KC_8,        KC_9,  KC_DOT,   KC_NO,  KC_NO,    KC_NO,    KC_NO,  KC_NO,
-    LCTL(KC_C), LCTL(KC_V),  LCTL(KC_V), LCTL(KC_C)
+    KC_PAST,  KC_1,     KC_2,     KC_3,    KC_PPLS,  KC_NO,  KC_NO,   KC_NO,    KC_NO,  KC_NO,
+    KC_PSLS,  KC_4,     KC_5,     KC_6,    KC_PMNS,  KC_NO,  M_NTRM,  M_EMOJI,  KC_NO,  KC_NO,
+    KC_0,     KC_7,     KC_8,     KC_9,    KC_DOT,   KC_NO,  KC_NO,   KC_NO,    KC_NO,  KC_NO,
+    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
   ),
 
   [LEFT_TAP_LAYER] = LAYOUT_split_3x5_2(
-    KC_NO,  KC_F1,  KC_F2,   KC_F3,          KC_F4,   M_XTAB,   M_ISWIN,  M_ISCB,   KC_PSCR,  KC_INS,
-    KC_NO,  KC_F5,  KC_F6,   KC_F7,          KC_F8,   KC_BRIU,  KC_VOLU,  KC_MPLY,  KC_MNXT,  LSFT(KC_INS),
-    KC_Z,   KC_F9,  KC_F10,  KC_F11,         KC_F12,  KC_BRID,  KC_VOLD,  KC_MUTE,  KC_MPRV,  LCTL(KC_INS),
-    KC_NO,  KC_NO,  KC_NO,   TO(BASE_LAYER)
+    KC_NO,    KC_F1,    KC_F2,    KC_F3,   KC_F4,   M_XTAB,   M_ISWIN,  M_ISCB,   KC_PSCR,  KC_INS,
+    KC_NO,    KC_F5,    KC_F6,    KC_F7,   KC_F8,   KC_BRIU,  KC_VOLU,  KC_MPLY,  KC_MNXT,  LSFT(KC_INS),
+    KC_Z,     KC_F9,    KC_F10,   KC_F11,  KC_F12,  KC_BRID,  KC_VOLD,  KC_MUTE,  KC_MPRV,  LCTL(KC_INS),
+    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
   ),
 
   [LEFT_HOLD_LAYER] = LAYOUT_split_3x5_2(
-    KC_NO,             KC_NO,       KC_NO,       KC_NO,    KC_NO,             M_XTAB,   M_PDESK,  LCTL(KC_TAB),  M_ALTT,   M_NDESK,
-    KC_NO,             M_APP4,      M_APP1,      M_APP2,   M_APP3,            KC_WH_U,  KC_LEFT,  KC_DOWN,       KC_UP,    KC_RGHT,
-    KC_NO,             KC_BTN2,       KC_BTN1,       M_1PASS,  LSFT(LCTL(KC_C)),  KC_WH_D,  KC_HOME,  KC_PGDN,       KC_PGUP,  KC_END,
-    LCTL(KC_C), LCTL(KC_V),  LCTL(KC_V), LCTL(KC_C)
+    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,             M_XTAB,   M_PDESK,  LCTL(KC_TAB),  M_ALTT,   M_NDESK,
+    KC_NO,    M_APP4,   M_APP1,   M_APP2,   M_APP3,            KC_WH_U,  KC_LEFT,  KC_DOWN,       KC_UP,    KC_RGHT,
+    KC_NO,    KC_BTN2,  KC_BTN1,  M_1PASS,  LSFT(LCTL(KC_C)),  KC_WH_D,  KC_HOME,  KC_PGDN,       KC_PGUP,  KC_END,
+    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
   ),
 
 };
