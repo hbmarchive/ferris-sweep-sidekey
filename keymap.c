@@ -98,10 +98,10 @@ static bool m_is_chromebook = false;
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [BASE_LAYER] = LAYOUT_split_3x5_2(
-    KC_Q,          LCTL_T(KC_W),  LALT_T(KC_F),  LGUI_T(KC_P),  KC_B,  KC_J,  LGUI_T(KC_L),  LALT_T(KC_U),  LCTL_T(KC_Y),  KC_BSPC,
-    KC_A,          KC_R,          KC_S,          KC_T,          KC_G,  KC_M,  KC_N,          KC_E,          KC_I,          KC_O,
-    OSL(LEFT_LAYER),   KC_X,          KC_C,          KC_D,          KC_V,  KC_K,  KC_H,          KC_COMM,       KC_DOT,        OSL(RIGHT_LAYER),
-    TD(TD_SHIFT),  TD(TD_SPACE),  TD(TD_ENTER),  TD(TD_ESCAPE)
+    LSFT_T(KC_Q),     LCTL_T(KC_W),  LALT_T(KC_F),  LGUI_T(KC_P),  KC_B,  KC_J,  LGUI_T(KC_L),  LALT_T(KC_U),  LCTL_T(KC_Y),  KC_BSPC,
+    KC_A,             KC_R,          KC_S,          KC_T,          KC_G,  KC_M,  KC_N,          KC_E,          KC_I,          KC_O,
+    OSL(LEFT_LAYER),  KC_X,          KC_C,          KC_D,          KC_V,  KC_K,  KC_H,          KC_COMM,       KC_DOT,        OSL(RIGHT_LAYER),
+    TD(TD_SHIFT),     TD(TD_SPACE),  TD(TD_ENTER),  TD(TD_ESCAPE)
   ),
 
   [SHIFT_LAYER] = LAYOUT_split_3x5_2(
@@ -112,8 +112,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [SPACE_LAYER] = LAYOUT_split_3x5_2(
-    KC_ESC,   KC_PSCR,  M_ISCB,   M_ISWIN,  KC_INS,   M_XTAB,   M_PDESK,  LCTL(KC_TAB),  M_ALTT,   M_NDESK,
-    KC_TAB,   KC_MNXT,  KC_MPLY,  KC_VOLU,  KC_BRIU,  KC_NO,    KC_LEFT,  KC_DOWN,       KC_UP,    KC_RGHT,
+    KC_NO,   KC_PSCR,  M_ISCB,   M_ISWIN,  KC_INS,   M_XTAB,   M_PDESK,  LCTL(KC_TAB),  M_ALTT,   M_NDESK,
+    KC_NO,   KC_MNXT,  KC_MPLY,  KC_VOLU,  KC_BRIU,  KC_NO,    KC_LEFT,  KC_DOWN,       KC_UP,    KC_RGHT,
     KC_CAPS,  KC_MPRV,  KC_MUTE,  KC_VOLD,  KC_BRID,  KC_NO,    KC_HOME,  KC_PGDN,       KC_PGUP,  KC_END,
     KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
   ),
@@ -135,13 +135,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [LEFT_LAYER] = LAYOUT_split_3x5_2(
     KC_NO,    KC_NO,    KC_NO,    KC_NO,   KC_NO,  KC_CIRC,  KC_AMPR,        KC_ASTR,        KC_UNDS,  KC_PLUS,
     KC_NO,    KC_NO,    KC_NO,    KC_NO,   KC_NO,  KC_COLN,  LSFT(KC_QUOT),  LSFT(KC_BSLS),  KC_MINS,  KC_EQL,
-    KC_Z,     KC_NO,    KC_NO,    KC_NO,   KC_NO,  KC_SCLN,  KC_QUOT,        KC_BSLS,        KC_GRV,   KC_QUES,
+    KC_Z,     KC_NO,    KC_NO,    KC_NO,   KC_NO,  KC_SCLN,  KC_QUOT,        KC_BSLS,        KC_GRV,   KC_EXLM,
     KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
   ),
 
   [RIGHT_LAYER] = LAYOUT_split_3x5_2(
-    KC_EXLM,  LSFT(KC_2),     LSFT(KC_3),  KC_DLR,   KC_PERC,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
-    KC_ESC,   LSFT(KC_NUBS),  KC_LBRC,     KC_LCBR,  KC_LPRN,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
+    KC_ESC,   LSFT(KC_2),     LSFT(KC_3),  KC_DLR,   KC_PERC,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
+    KC_TAB,   LSFT(KC_NUBS),  KC_LBRC,     KC_LCBR,  KC_LPRN,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
     CW_TOGG,  KC_NUBS,        KC_RBRC,     KC_RCBR,  KC_RPRN,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_SLSH,
     KC_TRNS,  KC_TRNS,        KC_TRNS,     KC_TRNS
   ),
@@ -365,6 +365,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     // Set the tapping term for the homerow mods.
+    case LSFT_T(KC_Q):
     case LCTL_T(KC_W):
     case LALT_T(KC_F):
     case LGUI_T(KC_P):
