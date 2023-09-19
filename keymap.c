@@ -2,16 +2,18 @@
 
 enum my_layers {
   BASE_LAYER,
-  LEFT_LAYER,
-  RIGHT_LAYER,
   SHIFT_LAYER,
   SPACE_LAYER,
   ENTER_LAYER,
   ESCAPE_LAYER,
+  LEFT_LAYER,
+  RIGHT_LAYER
 };
 
 enum my_keycodes {
-    M_ALTT = SAFE_RANGE,
+    M_ESCQ = SAFE_RANGE,
+    M_ESCW,
+    M_ALTT,
     M_NDESK,
     M_PDESK,
     M_XTAB,
@@ -19,6 +21,8 @@ enum my_keycodes {
     M_APP2,
     M_APP3,
     M_APP4,
+    M_APP5,
+    M_LIKE,
     M_1PASS,
     M_NTRM,
     M_EMOJI,
@@ -56,14 +60,6 @@ static td_tap_t td_escape = {
   .state = TD_NONE
 };
 
-static td_tap_t td_left = {
-  .state = TD_NONE
-};
-
-static td_tap_t td_right = {
-  .state = TD_NONE
-};
-
 td_state_t td_get_state(tap_dance_state_t *state);
 
 void shift_finished(tap_dance_state_t *state, void *user_data);
@@ -74,10 +70,6 @@ void enter_finished(tap_dance_state_t *state, void *user_data);
 void enter_reset(tap_dance_state_t *state, void *user_data);
 void escape_finished(tap_dance_state_t *state, void *user_data);
 void escape_reset(tap_dance_state_t *state, void *user_data);
-void left_finished(tap_dance_state_t *state, void *user_data);
-void left_reset(tap_dance_state_t *state, void *user_data);
-void right_finished(tap_dance_state_t *state, void *user_data);
-void right_reset(tap_dance_state_t *state, void *user_data);
 
 // Tap Dance definitions
 
@@ -85,18 +77,14 @@ enum {
   TD_SHIFT,
   TD_SPACE,
   TD_ENTER,
-  TD_ESCAPE,
-  TD_LEFT,
-  TD_RIGHT
+  TD_ESCAPE
 };
 
 tap_dance_action_t tap_dance_actions[] = {
     [TD_SHIFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, shift_finished, shift_reset),
-    [TD_SPACE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, space_finished, space_reset)
+    [TD_SPACE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, space_finished, space_reset),
     [TD_ENTER] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, enter_finished, enter_reset),
     [TD_ESCAPE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, escape_finished, escape_reset)
-    [TD_LEFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, left_finished, left_reset),
-    [TD_RIGHT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, right_finished, right_reset)
 };
 
 // Stores state of M_ALTT macro - true if we are currently tabbing between
@@ -118,36 +106,50 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [BASE_LAYER] = LAYOUT_split_3x5_2(
     KC_Q,          LCTL_T(KC_W),  LALT_T(KC_F),  LGUI_T(KC_P),  KC_B,  KC_J,  LGUI_T(KC_L),  LALT_T(KC_U),  LCTL_T(KC_Y),  KC_BSPC,
     KC_A,          KC_R,          KC_S,          KC_T,          KC_G,  KC_M,  KC_N,          KC_E,          KC_I,          KC_O,
-    TD(TD_LEFT),   KC_X,          KC_C,          KC_D,          KC_V,  KC_K,  KC_H,          KC_COMM,       KC_DOT,        TD(TD_RIGHT),
+    OSL(LEFT_LAYER),   KC_X,          KC_C,          KC_D,          KC_V,  KC_K,  KC_H,          KC_COMM,       KC_DOT,        OSL(RIGHT_LAYER),
     TD(TD_SHIFT),  TD(TD_SPACE),  TD(TD_ENTER),  TD(TD_ESCAPE)
   ),
 
-  [RIGHT_TAP_LAYER] = LAYOUT_split_3x5_2(
-    KC_EXLM,  LSFT(KC_2),     LSFT(KC_3),  KC_DLR,   KC_PERC,  KC_CIRC,  KC_AMPR,        KC_ASTR,        KC_UNDS,  KC_PLUS,
-    KC_TAB,   LSFT(KC_NUBS),  KC_LBRC,     KC_LCBR,  KC_LPRN,  KC_COLN,  LSFT(KC_QUOT),  LSFT(KC_BSLS),  KC_MINS,  KC_EQL,
-    KC_CAPS,  KC_NUBS,        KC_RBRC,     KC_RCBR,  KC_RPRN,  KC_SCLN,  KC_QUOT,        KC_BSLS,        KC_GRV,   KC_SLSH,
+  [SHIFT_LAYER] = LAYOUT_split_3x5_2(
+    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,  KC_NO,    KC_NO,    KC_MS_U,  KC_NO,    KC_DEL,
+    KC_NO,    KC_ACL0,  KC_ACL1,  KC_ACL2,  KC_NO,  KC_WH_U,  KC_MS_L,  KC_MS_D,  KC_MS_R,  KC_NO,
+    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,  KC_WH_D,  KC_NO,    KC_NO,    KC_NO,    KC_NO,
+    KC_TRNS,  KC_TRNS,  KC_BTN1,  KC_BTN2
+  ),
+
+  [SPACE_LAYER] = LAYOUT_split_3x5_2(
+    KC_ESC,   KC_PSCR,  M_ISCB,   M_ISWIN,  KC_INS,   M_XTAB,   M_PDESK,  LCTL(KC_TAB),  M_ALTT,   M_NDESK,
+    CW_TOGG,   KC_MNXT,  KC_MPLY,  KC_VOLU,  KC_BRIU,  KC_NO,    KC_LEFT,  KC_DOWN,       KC_UP,    KC_RGHT,
+    KC_CAPS,  KC_MPRV,  KC_MUTE,  KC_VOLD,  KC_BRID,  KC_NO,    KC_HOME,  KC_PGDN,       KC_PGUP,  KC_END,
+    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
+  ),
+
+  [ENTER_LAYER] = LAYOUT_split_3x5_2(
+    KC_PAST,  KC_1,     KC_2,     KC_3,    KC_PPLS,  KC_NO,  KC_F1,   KC_F2,    KC_F3,  KC_NO,
+    KC_PSLS,  KC_4,     KC_5,     KC_6,    KC_PMNS,  KC_NO,  KC_F4,   KC_F5,    KC_F6,  KC_NO,
+    KC_0,     KC_7,     KC_8,     KC_9,    KC_DOT,   KC_NO,  KC_F7,   KC_F8,    KC_F9,  KC_F10,
+    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
+  ),
+
+  [ESCAPE_LAYER] = LAYOUT_split_3x5_2(
+    M_ESCQ,   M_ESCW,      M_NTRM,      M_1PASS,           M_LIKE,      KC_NO,  KC_NO,  KC_NO,    KC_NO,  KC_NO,
+    KC_NO,    M_APP1,      M_APP2,      M_APP3,            M_APP4,      KC_NO,  KC_NO,  M_EMOJI,  KC_NO,  KC_NO,
+    KC_NO,    LCTL(KC_X),  LCTL(KC_C),  LSFT(LCTL(KC_C)),  LCTL(KC_V),  KC_NO,  KC_NO,  KC_NO,    KC_NO,  KC_NO,
+    KC_TRNS,  KC_TRNS,     KC_TRNS,     KC_TRNS
+  ),
+
+  [LEFT_LAYER] = LAYOUT_split_3x5_2(
+    KC_NO,    KC_NO,    KC_NO,    KC_NO,   KC_NO,  KC_CIRC,  KC_AMPR,        KC_ASTR,        KC_UNDS,  KC_PLUS,
+    KC_NO,    KC_NO,    KC_NO,    KC_NO,   KC_NO,  KC_COLN,  LSFT(KC_QUOT),  LSFT(KC_BSLS),  KC_MINS,  KC_EQL,
+    KC_Z,     KC_NO,    KC_NO,    KC_NO,   KC_NO,  KC_SCLN,  KC_QUOT,        KC_BSLS,        KC_GRV,   KC_QUES,
+    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
+  ),
+
+  [RIGHT_LAYER] = LAYOUT_split_3x5_2(
+    KC_EXLM,  LSFT(KC_2),     LSFT(KC_3),  KC_DLR,   KC_PERC,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
+    KC_TAB,   LSFT(KC_NUBS),  KC_LBRC,     KC_LCBR,  KC_LPRN,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
+    KC_ESC,   KC_NUBS,        KC_RBRC,     KC_RCBR,  KC_RPRN,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_SLSH,
     KC_TRNS,  KC_TRNS,        KC_TRNS,     KC_TRNS
-  ),
-
-  [RIGHT_HOLD_LAYER] = LAYOUT_split_3x5_2(
-    KC_PAST,  KC_1,     KC_2,     KC_3,    KC_PPLS,  KC_NO,  KC_NO,   KC_NO,    KC_NO,  KC_NO,
-    KC_PSLS,  KC_4,     KC_5,     KC_6,    KC_PMNS,  KC_NO,  M_NTRM,  M_EMOJI,  KC_NO,  KC_NO,
-    KC_0,     KC_7,     KC_8,     KC_9,    KC_DOT,   KC_NO,  KC_NO,   KC_NO,    KC_NO,  KC_NO,
-    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
-  ),
-
-  [LEFT_TAP_LAYER] = LAYOUT_split_3x5_2(
-    KC_NO,    KC_F1,    KC_F2,    KC_F3,   KC_F4,   M_XTAB,   M_ISWIN,  M_ISCB,   KC_PSCR,  KC_INS,
-    KC_NO,    KC_F5,    KC_F6,    KC_F7,   KC_F8,   KC_BRIU,  KC_VOLU,  KC_MPLY,  KC_MNXT,  LSFT(KC_INS),
-    KC_Z,     KC_F9,    KC_F10,   KC_F11,  KC_F12,  KC_BRID,  KC_VOLD,  KC_MUTE,  KC_MPRV,  LCTL(KC_INS),
-    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
-  ),
-
-  [LEFT_HOLD_LAYER] = LAYOUT_split_3x5_2(
-    KC_NO,    KC_NO,    KC_NO,    KC_NO,    KC_NO,             M_XTAB,   M_PDESK,  LCTL(KC_TAB),  M_ALTT,   M_NDESK,
-    KC_NO,    M_APP4,   M_APP1,   M_APP2,   M_APP3,            KC_WH_U,  KC_LEFT,  KC_DOWN,       KC_UP,    KC_RGHT,
-    KC_NO,    KC_BTN2,  KC_BTN1,  M_1PASS,  LSFT(LCTL(KC_C)),  KC_WH_D,  KC_HOME,  KC_PGDN,       KC_PGUP,  KC_END,
-    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
   ),
 
 };
@@ -192,6 +194,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           kc_del_registered = false;
           return false;
         }
+      }
+      break;
+    case M_ESCQ:
+      if (record->event.pressed) {
+        SEND_STRING(SS_TAP(X_ESC)":q!"SS_TAP(X_ENT));
+      } else {
+        layer_move(BASE_LAYER);
+      }
+      break;
+    case M_ESCW:
+      if (record->event.pressed) {
+        SEND_STRING(SS_TAP(X_ESC)":wq"SS_TAP(X_ENT));
+      } else {
+        layer_move(BASE_LAYER);
       }
       break;
     case M_ALTT:
@@ -266,6 +282,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           SEND_STRING(SS_TAP(X_5));
           SEND_STRING(SS_UP(X_LGUI)SS_UP(X_LALT)SS_UP(X_LCTL)SS_UP(X_LSFT));
         }
+      }
+      break;
+    case M_LIKE:
+      if (record->event.pressed) {
+        if (m_is_chromebook) {
+          SEND_STRING(SS_DOWN(X_LALT)SS_TAP(X_5)SS_UP(X_LALT));
+        } else {
+          SEND_STRING(SS_DOWN(X_LSFT)SS_DOWN(X_LCTL)SS_DOWN(X_LALT)SS_DOWN(X_LGUI));
+          SEND_STRING(SS_TAP(X_5));
+          SEND_STRING(SS_UP(X_LGUI)SS_UP(X_LALT)SS_UP(X_LCTL)SS_UP(X_LSFT));
+        }
+        SEND_STRING(SS_DELAY(100));
+        SEND_STRING(SS_DOWN(X_LSFT)SS_DOWN(X_LALT));
+        SEND_STRING(SS_TAP(X_B));
+        SEND_STRING(SS_UP(X_LALT)SS_UP(X_LSFT));
       }
       break;
     case M_1PASS:
@@ -355,19 +386,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
-void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
-  if (!record->event.pressed) {
-    if (IS_LAYER_ON(LEFT_LAYER) && td_left.state == TD_SINGLE_TAP && keycode != TD(TD_LEFT)) {
-      layer_off(LEFT_LAYER);
-    }
-  }
-  if (!record->event.pressed) {
-    if (IS_LAYER_ON(RIGHT_LAYER) && td_right.state == TD_SINGLE_TAP && keycode != TD(TD_RIGHT)) {
-      layer_off(RIGHT_LAYER);
-    }
-  }
-}
-
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     // Set the tapping term for the homerow mods.
@@ -379,9 +397,6 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     case LCTL_T(KC_Y):
       return TAPPING_TERM_MODS;
     // Set the tapping term for tap dance keys.
-    case TD(TD_LEFT):
-    case TD(TD_RIGHT):
-      return TAPPING_TERM_TD_LR;
     case TD(TD_SHIFT):
     case TD(TD_SPACE):
     case TD(TD_ENTER):
@@ -393,7 +408,6 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 }
 
 td_state_t td_get_state(tap_dance_state_t *state) {
-
   if (state->count == 1) {
     // If the keypress has been interrupted by another keypress or is no longer
     // held down by the end of the tap time, then we know it was just a single
@@ -415,83 +429,17 @@ td_state_t td_get_state(tap_dance_state_t *state) {
     if (state->interrupted || !state->pressed)
       return TD_DOUBLE_TAP;
   }
-
   return TD_UNKNOWN;
-}
-
-void left_finished(tap_dance_state_t *state, void *user_data) {
-    td_left.state = td_get_state(state);
-    switch (td_left.state) {
-        case TD_SINGLE_TAP:
-          layer_on(LEFT_LAYER);
-          break;
-        case TD_DOUBLE_TAP:
-          register_code(KC_Z);
-          break;
-        case TD_HOLD:
-          layer_on(LEFT_LAYER);
-          break;
-        default:
-          break;
-    }
-}
-
-void left_reset(tap_dance_state_t *state, void *user_data) {
-    switch (td_left.state) {
-        case TD_SINGLE_TAP:
-          // Single tap LEFT_LAYER turned off in post_process_record_user().
-          break;
-        case TD_DOUBLE_TAP:
-          unregister_code(KC_Z);
-          break;
-        case TD_HOLD:
-          layer_off(LEFT_LAYER);
-        default:
-          break;
-    }
-    td_left.state = TD_NONE;
-}
-
-void right_finished(tap_dance_state_t *state, void *user_data) {
-    td_right.state = td_get_state(state);
-    switch (td_right.state) {
-        case TD_SINGLE_TAP:
-          layer_on(RIGHT_LAYER);
-          break;
-        case TD_DOUBLE_TAP:
-          register_code(KC_SLSH);
-          break;
-        case TD_HOLD:
-          layer_on(RIGHT_LAYER);
-          break;
-        default:
-          break;
-    }
-}
-
-void right_reset(tap_dance_state_t *state, void *user_data) {
-    switch (td_right.state) {
-        case TD_SINGLE_TAP:
-          // Single tap RIGHT_LAYER turned off in post_process_record_user().
-          break;
-        case TD_DOUBLE_TAP:
-          unregister_code(KC_SLSH);
-          break;
-        case TD_HOLD:
-          layer_off(RIGHT_LAYER);
-          break;
-        default:
-          break;
-    }
-    td_right.state = TD_NONE;
 }
 
 void shift_finished(tap_dance_state_t *state, void *user_data) {
     td_shift.state = td_get_state(state);
     switch (td_shift.state) {
         case TD_SINGLE_TAP:
+          set_oneshot_mods(MOD_LSFT);
+          break;
         case TD_DOUBLE_TAP:
-          set_oneshot_mod(MOD_LSFT);
+          caps_word_on();
           break;
         case TD_HOLD:
           layer_on(SHIFT_LAYER);
@@ -504,9 +452,11 @@ void shift_finished(tap_dance_state_t *state, void *user_data) {
 void shift_reset(tap_dance_state_t *state, void *user_data) {
     switch (td_shift.state) {
         case TD_SINGLE_TAP:
-        case TD_DOUBLE_TAP:
           // Do nothing - the oneshot mod will switch itself off after another
           // key has been pressed.
+          break;
+        case TD_DOUBLE_TAP:
+          // Do nothing - caps word will finish itself.
           break;
         case TD_HOLD:
           layer_off(SHIFT_LAYER);
@@ -554,6 +504,7 @@ void enter_finished(tap_dance_state_t *state, void *user_data) {
     switch (td_enter.state) {
         case TD_DOUBLE_TAP:
           register_code(KC_ENT);
+          unregister_code(KC_ENT);
         case TD_SINGLE_TAP:
           register_code(KC_ENT);
           break;
@@ -568,12 +519,11 @@ void enter_finished(tap_dance_state_t *state, void *user_data) {
 void enter_reset(tap_dance_state_t *state, void *user_data) {
     switch (td_enter.state) {
         case TD_DOUBLE_TAP:
-          unregister_code(KC_ENT);
         case TD_SINGLE_TAP:
           unregister_code(KC_ENT);
           break;
         case TD_HOLD:
-          layer_off(RIGHT_HOLD_LAYER);
+          layer_off(ENTER_LAYER);
         default:
           break;
     }
@@ -585,6 +535,7 @@ void escape_finished(tap_dance_state_t *state, void *user_data) {
     switch (td_escape.state) {
         case TD_DOUBLE_TAP:
           register_code(KC_ESC);
+          unregister_code(KC_ESC);
         case TD_SINGLE_TAP:
           register_code(KC_ESC);
           break;
@@ -599,7 +550,6 @@ void escape_finished(tap_dance_state_t *state, void *user_data) {
 void escape_reset(tap_dance_state_t *state, void *user_data) {
     switch (td_escape.state) {
         case TD_DOUBLE_TAP:
-          unregister_code(KC_ESC);
         case TD_SINGLE_TAP:
           unregister_code(KC_ESC);
           break;

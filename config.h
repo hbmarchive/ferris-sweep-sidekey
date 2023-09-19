@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // The default is 20. Since we made the mouse about 3 times faster with the
 // previous setting, give it more time to accelerate to max speed to retain
 // precise control over short distances.
-#define MOUSEKEY_TIME_TO_MAX 40
+#define MOUSEKEY_TIME_TO_MAX 120
 
 // The default is 300. Let's try and make this as low as possible while keeping
 // the cursor responsive
@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MOUSEKEY_WHEEL_INTERVAL 50
 
 // The default is 40
-#define MOUSEKEY_WHEEL_TIME_TO_MAX 100
+#define MOUSEKEY_WHEEL_TIME_TO_MAX 120
 
 // Vaguely tuned settings for kinetic mouse wheel
 #define MOUSEKEY_WHEEL_INITIAL_MOVEMENTS 12
@@ -58,7 +58,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define TAPPING_TERM_MODS 700
 
 // Tapping term for tap dance keys
-#define TAPPING_TERM_TD_LR 160
 #define TAPPING_TERM_TD_THUMB 160
 
 // Define the tap-hold tap dance action.
