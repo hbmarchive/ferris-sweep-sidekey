@@ -95,12 +95,6 @@ static bool m_altt_pressed = false;
 // function layer
 static bool m_is_chromebook = false;
 
-// Used to temporarily store the state of the mod keys.
-static uint8_t mod_state = 0;
-
-// State for managing shift backspace behaviour.
-static bool kc_del_registered = false;
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [BASE_LAYER] = LAYOUT_split_3x5_2(
@@ -119,7 +113,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [SPACE_LAYER] = LAYOUT_split_3x5_2(
     KC_ESC,   KC_PSCR,  M_ISCB,   M_ISWIN,  KC_INS,   M_XTAB,   M_PDESK,  LCTL(KC_TAB),  M_ALTT,   M_NDESK,
-    CW_TOGG,   KC_MNXT,  KC_MPLY,  KC_VOLU,  KC_BRIU,  KC_NO,    KC_LEFT,  KC_DOWN,       KC_UP,    KC_RGHT,
+    KC_TAB,   KC_MNXT,  KC_MPLY,  KC_VOLU,  KC_BRIU,  KC_NO,    KC_LEFT,  KC_DOWN,       KC_UP,    KC_RGHT,
     KC_CAPS,  KC_MPRV,  KC_MUTE,  KC_VOLD,  KC_BRID,  KC_NO,    KC_HOME,  KC_PGDN,       KC_PGUP,  KC_END,
     KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
   ),
@@ -147,8 +141,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [RIGHT_LAYER] = LAYOUT_split_3x5_2(
     KC_EXLM,  LSFT(KC_2),     LSFT(KC_3),  KC_DLR,   KC_PERC,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
-    KC_TAB,   LSFT(KC_NUBS),  KC_LBRC,     KC_LCBR,  KC_LPRN,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
-    KC_ESC,   KC_NUBS,        KC_RBRC,     KC_RCBR,  KC_RPRN,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_SLSH,
+    KC_ESC,   LSFT(KC_NUBS),  KC_LBRC,     KC_LCBR,  KC_LPRN,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,
+    CW_TOGG,  KC_NUBS,        KC_RBRC,     KC_RCBR,  KC_RPRN,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_SLSH,
     KC_TRNS,  KC_TRNS,        KC_TRNS,     KC_TRNS
   ),
 
@@ -166,6 +160,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   // Ensure shift is not pressed when the left and right layers is active.
   if (IS_LAYER_ON(LEFT_LAYER) || IS_LAYER_ON(RIGHT_LAYER)) {
     switch (keycode) {
+      case OSL(LEFT_LAYER):
+      case OSL(RIGHT_LAYER):
       case KC_Z:
       case KC_SLSH:
         break;
@@ -175,27 +171,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
   }
 
-  mod_state = get_mods();
-
   switch (keycode) {
-    // Shift-backspace produces delete.
-    case KC_BSPC:
-      if (record->event.pressed) {
-        if (mod_state & MOD_MASK_SHIFT) {
-          del_mods(MOD_MASK_SHIFT);
-          register_code(KC_DEL);
-          kc_del_registered = true;
-          set_mods(mod_state);
-          return false;
-        }
-      } else {
-        if (kc_del_registered) {
-          unregister_code(KC_DEL);
-          kc_del_registered = false;
-          return false;
-        }
-      }
-      break;
     case M_ESCQ:
       if (record->event.pressed) {
         SEND_STRING(SS_TAP(X_ESC)":q!"SS_TAP(X_ENT));
