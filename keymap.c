@@ -53,8 +53,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [NAV_LAYER] = LAYOUT_split_3x5_2(
     KC_NO,    KC_PSCR,  M_ISCB,   M_ISWIN,  KC_INS,   M_XTAB,  M_PDESK,  LCTL(KC_TAB),  M_ALTT,   M_NDESK,
-    KC_NO,    KC_MNXT,  KC_MPLY,  KC_VOLU,  KC_BRIU,  KC_NO,   KC_LEFT,  KC_DOWN,       KC_UP,    KC_RGHT,
-    KC_CAPS,  KC_MPRV,  KC_MUTE,  KC_VOLD,  KC_BRID,  KC_NO,   KC_HOME,  KC_PGDN,       KC_PGUP,  KC_END,
+    KC_NO,    KC_MNXT,  KC_MPLY,  KC_VOLU,  KC_BRIU,  KC_WH_U,   KC_LEFT,  KC_DOWN,       KC_UP,    KC_RGHT,
+    KC_CAPS,  KC_MPRV,  KC_MUTE,  KC_VOLD,  KC_BRID,  KC_WH_D,   KC_HOME,  KC_PGDN,       KC_PGUP,  KC_END,
     KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
   ),
 
@@ -68,15 +68,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [SCUT_LAYER] = LAYOUT_split_3x5_2(
     M_ESCQ,   M_ESCW,      M_NTRM,      M_1PASS,           M_LIKE,      KC_NO,  KC_NO,  KC_NO,    KC_NO,  KC_NO,
     KC_ESC,   M_APP1,      M_APP2,      M_APP3,            M_APP4,      KC_NO,  KC_NO,  M_EMOJI,  KC_NO,  KC_NO,
-    KC_CAPS,  LCTL(KC_X),  LCTL(KC_C),  LSFT(LCTL(KC_C)),  LCTL(KC_V),  KC_NO,  KC_NO,  KC_NO,    KC_NO,  KC_NO,
+    KC_CAPS,  LCTL(KC_X),  LCTL(KC_C),  LSFT(LCTL(KC_C)),  LCTL(KC_V),  KC_NO,  KC_NO,  KC_NO,    KC_NO,  KC_SLSH,
     KC_TRNS,  KC_TRNS,     KC_TRNS,     KC_TRNS
   ),
 
   [SYM_LAYER] = LAYOUT_split_3x5_2(
-    KC_EXCL,         LSFT(KC_2),     LSFT(KC_3),  KC_DLR,   KC_PERC,  KC_CIRC,  KC_AMPR,        KC_ASTR,        KC_UNDS,  KC_PLUS,
+    KC_EXLM,         LSFT(KC_2),     LSFT(KC_3),  KC_DLR,   KC_PERC,  KC_CIRC,  KC_AMPR,        KC_ASTR,        KC_UNDS,  KC_PLUS,
     KC_TAB,          LSFT(KC_NUBS),  KC_LBRC,     KC_LCBR,  KC_LPRN,  KC_COLN,  LSFT(KC_QUOT),  LSFT(KC_BSLS),  KC_MINS,  KC_EQL,
-    CW_TOGG,         KC_NUBS,        KC_RBRC,     KC_RCBR,  KC_RPRN,  KC_SCLN,  KC_QUOT,        KC_BSLS,        KC_GRV,   KC_SLSH,
-    TO(BASE_LAYER),  KC_TAB,         KC_TRNS,     KC_ESC
+    CW_TOGG,         KC_NUBS,        KC_RBRC,     KC_RCBR,  KC_RPRN,  KC_SCLN,  KC_QUOT,        KC_BSLS,        KC_GRV,   KC_QUES,
+    CW_TOGG,  KC_TAB,         KC_TRNS,     KC_ESC
   ),
 
 };
